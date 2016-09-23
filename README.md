@@ -1,6 +1,9 @@
 # Crispy-Waffle Passphrase Generator
 Passphrase generator using Diceware-like lists to generate high-entropy passphrases.
 
+[![Build Status](https://travis-ci.org/ansell/crispy-waffle.svg?branch=master)](https://travis-ci.org/ansell/crispy-waffle) [![Coverage Status](https://coveralls.io/repos/ansell/crispy-waffle/badge.svg?branch=master)](https://coveralls.io/r/ansell/crispy-waffle?branch=master)
+
+
 # Running Passphrase Generator
 
 The command to generate a passphrase is:
