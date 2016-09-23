@@ -44,7 +44,7 @@ import joptsimple.OptionSpec;
  * 
  * @author Peter Ansell p_ansell@yahoo.com
  */
-public final class CrispyWaffler {
+public final class CrispyWaffleCook {
 
 	/**
 	 * The minimum number of words to include in passphrase.
@@ -59,7 +59,7 @@ public final class CrispyWaffler {
 	/**
 	 * Private constructor for static only class
 	 */
-	private CrispyWaffler() {
+	private CrispyWaffleCook() {
 	}
 
 	public static void main(String... args) throws Exception {
@@ -98,9 +98,9 @@ public final class CrispyWaffler {
 		}
 
 		List<String> allWords = Files.readAllLines(wordListPath, StandardCharsets.UTF_8);
-		CrispyWaffleDB crispyWaffleDB = CrispyWaffleDB.fromWords(allWords);
+		CrispyWaffleIron crispyWaffleDB = CrispyWaffleIron.fromWords(allWords);
 		for (int i = 0; i < wordCount; i++) {
-			System.out.print(crispyWaffleDB.throwDice());
+			System.out.print(crispyWaffleDB.cookBatch());
 			System.out.print(' ');
 		}
 		System.out.println("");

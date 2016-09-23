@@ -14,12 +14,13 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Crispy Waffle DB
+ * Crispy Waffle Iron Passphrase Generator.
  * 
  * @author Peter Ansell p_ansell@yahoo.com
  */
-public class CrispyWaffleDB {
-	private static final int MINIMUM_SEQUENCE_LENGTH = 3;
+public class CrispyWaffleIron {
+
+	public static final int MINIMUM_SEQUENCE_LENGTH = 3;
 
 	private static final SecureRandom PRNG = new SecureRandom();
 
@@ -29,7 +30,7 @@ public class CrispyWaffleDB {
 
 	private final int dicewareLength;
 
-	private CrispyWaffleDB(Map<String, String> dicewareMap, int dicewareLength) {
+	private CrispyWaffleIron(Map<String, String> dicewareMap, int dicewareLength) {
 		if (dicewareLength < MINIMUM_SEQUENCE_LENGTH) {
 			throw new IllegalArgumentException(
 					"Cannot generate passphrases from this list due to it containing shorter sequences than necessary: found: "
@@ -50,6 +51,15 @@ public class CrispyWaffleDB {
 				throw new IllegalArgumentException(
 						"Found a sequence that did not solely use US-ASCII digits: " + nextSequence);
 			}
+			try {
+				int parsedInteger = Integer.parseInt(nextSequence);
+				if (parsedInteger < 0) {
+					throw new IllegalArgumentException(
+							"Found a sequence that did not solely use digits: " + nextSequence);
+				}
+			} catch (NumberFormatException e) {
+				throw new IllegalArgumentException("Found a sequence that did not solely use digits: " + nextSequence);
+			}
 			for (int i = 0; i < nextSequence.length(); i++) {
 				nextDicewareCharacters.add(nextSequence.charAt(i));
 			}
@@ -61,7 +71,7 @@ public class CrispyWaffleDB {
 		return dicewareLength;
 	}
 
-	public static CrispyWaffleDB fromWords(Iterable<String> allWords) {
+	public static CrispyWaffleIron fromWords(Iterable<String> allWords) {
 		int count = 0;
 		Map<String, String> dicewareMap = new ConcurrentHashMap<>();
 		Integer dicewareLength = null;
@@ -72,8 +82,8 @@ public class CrispyWaffleDB {
 			if (splitWord.length < 2) {
 				splitWord = tempWord.split("\t", 2);
 				if (splitWord.length < 2) {
-					throw new IllegalArgumentException("Found an unrecognised line in the word list on line " + count
-							+ ": " + nextWord + " splitlength=" + splitWord.length);
+					throw new IllegalArgumentException(
+							"Found an unrecognised line in the word list on line " + count + ": " + nextWord);
 				}
 			}
 			String dicewareSequence = splitWord[0].trim();
@@ -85,16 +95,18 @@ public class CrispyWaffleDB {
 			if (dicewareLength == null) {
 				dicewareLength = dicewareSequence.length();
 			}
-			String parsedSequence = Integer.toString(Integer.parseInt(dicewareSequence));
-			if (!parsedSequence.equals(dicewareSequence)) {
-				throw new IllegalArgumentException(
-						"Did not recognise some characters in the diceware sequence: " + dicewareSequence);
-			}
 			String dicewareWord = splitWord[1].trim();
 			if (dicewareWord.contains(" ")) {
 				throw new IllegalArgumentException("Diceware word contained a space: " + dicewareWord);
 			}
-			String putIfAbsent = dicewareMap.putIfAbsent(parsedSequence, dicewareWord);
+			if (dicewareWord.length() < 3) {
+				throw new IllegalArgumentException(
+						"Cannot generate passphrases from this list due to it containing shorter passphrase words than necessary");
+			}
+			if (dicewareMap.containsValue(dicewareWord)) {
+				throw new IllegalArgumentException("Found duplicate diceware word: duplicate=" + dicewareWord);
+			}
+			String putIfAbsent = dicewareMap.putIfAbsent(dicewareSequence, dicewareWord);
 			if (putIfAbsent != null) {
 				throw new IllegalArgumentException("Found duplicate diceware word for different sequences: original="
 						+ putIfAbsent + " duplicate=" + dicewareSequence);
@@ -105,10 +117,16 @@ public class CrispyWaffleDB {
 			throw new IllegalArgumentException("Word list was empty");
 		}
 
-		return new CrispyWaffleDB(dicewareMap, dicewareLength);
+		return new CrispyWaffleIron(dicewareMap, dicewareLength);
 	}
 
-	public final String throwDice() {
+	/**
+	 * Returns a string pseudo randomly chosen from the list of words. The
+	 * returned value is the next diceware passphrase component.
+	 * 
+	 * @return A string containing the next diceware passphrase component.
+	 */
+	public final String cookBatch() {
 		char[] result = new char[getSequenceLength()];
 		for (int i = 0; i < result.length; i++) {
 			result[i] = this.dicewareCharacters.get(PRNG.nextInt(dicewareCharacters.size()));
