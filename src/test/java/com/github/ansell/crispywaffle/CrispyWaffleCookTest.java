@@ -47,6 +47,15 @@ public class CrispyWaffleCookTest {
 	 * {@link com.github.ansell.crispywaffle.CrispyWaffleCook#main(java.lang.String[])}.
 	 */
 	@Test
+	public final void testMainHelp() throws Exception {
+		CrispyWaffleCook.main("--help");
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.github.ansell.crispywaffle.CrispyWaffleCook#main(java.lang.String[])}.
+	 */
+	@Test
 	public final void testMainNone() throws Exception {
 		thrown.expect(OptionException.class);
 		CrispyWaffleCook.main();
