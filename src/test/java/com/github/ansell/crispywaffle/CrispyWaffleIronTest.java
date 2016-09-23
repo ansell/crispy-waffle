@@ -119,6 +119,14 @@ public class CrispyWaffleIronTest {
 	}
 
 	@Test
+	public final void testFromWordsNonNumericKey() throws Exception {
+		thrown.expect(IllegalArgumentException.class);
+		thrown.expectMessage(
+				"Found a sequence that did not solely use digits: 1ZZ");
+		CrispyWaffleIron.fromWords(Arrays.asList("1ZZ AAA", "112 AAB"));
+	}
+
+	@Test
 	public final void testFromWordsTwoValidValues() throws Exception {
 		CrispyWaffleIron testIron = CrispyWaffleIron.fromWords(Arrays.asList("111 AAA", "112 AAB"));
 		assertEquals(3, testIron.getSequenceLength());
